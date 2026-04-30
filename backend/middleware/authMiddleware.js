@@ -3,6 +3,7 @@ const User = require("../models/user");
 
 const protect = async (req, res, next) => {
   let token;
+  const jwtSecret = process.env.JWT_SECRET || "villageconnectsecret";
 
   if (
     req.headers.authorization &&
@@ -10,10 +11,7 @@ const protect = async (req, res, next) => {
   ) {
     try {
       token = req.headers.authorization.split(" ")[1];
-      const decoded = jwt.verify(
-        token,
-        process.env.JWT_SECRET || "villageconnectsecret"
-      );
+      const decoded = jwt.verify(token, jwtSecret);
 
       req.user = await User.findById(decoded.id).select("-password");
       next();

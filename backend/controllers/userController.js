@@ -3,8 +3,17 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const User = require("../models/user");
 
+const JWT_SECRET = process.env.JWT_SECRET;
+const SECRET_FALLBACK = "villageconnectsecret";
+
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || "villageconnectsecret", {
+  if (!JWT_SECRET) {
+    console.warn(
+      "Warning: JWT_SECRET is not set. Using insecure fallback secret. Configure JWT_SECRET before deploying to production."
+    );
+  }
+
+  return jwt.sign({ id }, JWT_SECRET || SECRET_FALLBACK, {
     expiresIn: "30d",
   });
 };
